@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Košík</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 40px 40px 30px 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        }
+        h1 {
+            color: #1a73e8;
+            margin-bottom: 24px;
+            letter-spacing: 1px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #e3e3e3;
+            text-align: left;
+        }
+        th {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        .btn {
+            background: linear-gradient(90deg, #1a73e8 0%, #4fc3f7 100%);
+            color: #fff;
+            padding: 8px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.2s;
+            box-shadow: 0 2px 8px rgba(26,115,232,0.08);
+        }
+        .btn:hover {
+            background: linear-gradient(90deg, #1565c0 0%, #039be5 100%);
+        }
+        a {
+            color: #1a73e8;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Váš košík</h1>
+        {% if cart %}
+        <table>
+            <tr><th>Produkt</th><th>Cena</th><th>Akce</th></tr>
+            {% for item in cart %}
+            <tr>
+                <td>{{ item['name'] }}</td>
+                <td>{{ item['price'] }} Kč</td>
+                <td>
+                    <form method="post" action="/remove_from_cart/{{ item['id'] }}" style="display:inline;">
+                        <button class="btn" type="submit">Odstranit</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <p><strong>Celkem: {{ total }} Kč</strong></p>
+        {% else %}
+        <p>Košík je prázdný.</p>
+        {% endif %}
+        <p><a href="/">Zpět na hlavní stránku</a></p>
+    </div>
+</body>
+</html>

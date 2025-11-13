@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Eshop - Produkty</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 40px 40px 30px 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        }
+        h1 {
+            color: #1a73e8;
+            text-align: center;
+            margin-bottom: 32px;
+            letter-spacing: 2px;
+        }
+        .product {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #e3e3e3;
+            padding: 24px 0;
+        }
+        .product:last-child {
+            border-bottom: none;
+        }
+        .product-info {
+            flex: 1;
+        }
+        .product h2 {
+            margin: 0 0 8px 0;
+            color: #333;
+        }
+        .product p {
+            margin: 0 0 8px 0;
+            color: #666;
+        }
+        .product .price {
+            font-size: 1.1em;
+            color: #1a73e8;
+            font-weight: bold;
+        }
+        .btn {
+            background: linear-gradient(90deg, #1a73e8 0%, #4fc3f7 100%);
+            color: #fff;
+            padding: 10px 22px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1em;
+            transition: background 0.2s;
+            box-shadow: 0 2px 8px rgba(26,115,232,0.08);
+        }
+        .btn:hover {
+            background: linear-gradient(90deg, #1565c0 0%, #039be5 100%);
+        }
+        .cart-link {
+            float: right;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Eshop - Produkty</h1>
+        <a class="btn cart-link" href="/cart">Zobrazit košík</a>
+        <form method="get" style="margin-bottom: 30px; display: flex; gap: 24px; align-items: center;">
+            <div>
+                <label for="type">Filtrovat podle typu:</label>
+                <select name="type" id="type" onchange="this.form.submit()" style="margin-left:10px; padding:6px; border-radius:6px;">
+                    <option value="">Všechny typy</option>
+                    {% for t in types %}
+                        <option value="{{ t }}" {% if selected_type == t %}selected{% endif %}>{{ t|capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="sort">Řadit podle ceny:</label>
+                <select name="sort" id="sort" onchange="this.form.submit()" style="margin-left:10px; padding:6px; border-radius:6px;">
+                    <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Vzestupně</option>
+                    <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>Sestupně</option>
+                </select>
+            </div>
+        </form>
+        {% for product in products %}
+        <div class="product">
+            <div class="product-info">
+                <h2>{{ product['name'] }}</h2>
+                <p>{{ product['description'] }}</p>
+                <p><strong>Model:</strong> {{ product['model'] }}</p>
+                <p class="price"><strong>Cena: {{ product['price'] }} Kč</strong></p>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px; align-items:flex-end;">
+                <a class="btn" href="/product/{{ product['id'] }}">Detail produktu</a>
+                <form class="addToCartForm" method="post" action="/add_to_cart/{{ product['id'] }}" style="margin:0;" onsubmit="showModal(event)">
+                    <button class="btn" type="submit">Přidat do košíku</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Modal -->
+        <div id="cartModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:1000;">
+            <div style="background:#fff; max-width:400px; margin:120px auto; padding:32px; border-radius:12px; box-shadow:0 4px 24px rgba(0,0,0,0.18); text-align:center;">
+                <h2>Položka byla přidána do košíku!</h2>
+                <p>Chcete pokračovat v nákupu nebo přejít do košíku?</p>
+                <div style="margin-top:24px; display:flex; justify-content:center; gap:18px;">
+                    <button class="btn" onclick="closeModal()">Pokračovat v nákupu</button>
+                    <a class="btn" href="/cart">Přejít do košíku</a>
+                </div>
+            </div>
+        </div>
+        <script>
+        function showModal(e) {
+            e.preventDefault();
+            fetch(e.target.action, {method: 'POST'})
+                .then(() => {
+                    document.getElementById('cartModal').style.display = 'block';
+                });
+        }
+        function closeModal() {
+            document.getElementById('cartModal').style.display = 'none';
+            window.location.href = '/';
+        }
+        </script>
+    </div>
+</body>
+</html>
